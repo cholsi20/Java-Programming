@@ -1,0 +1,332 @@
+**********
+SALES BILL
+**********
+
+/*
+ * Courtney Holsinger
+ * 11.18.2015
+ * Midterm II 
+ * Class SalesBill
+ */
+
+package sales_bill;
+
+//begin superclass SalesBill
+public class SalesBill {
+
+	//----------------------------------------------------------------private instance variables
+	private String customerName; 
+	private double totalSales;
+	private double taxRate;
+
+	//----------------------------------------------------------------SalesBill Constructors
+	//single argument constructor SalesBill calls three argument 
+	//constructor to initialize other two variables
+	public SalesBill( String customer ) {
+		this( customer, 0, 0 );
+	} //end single argument constructor SalesBill
+	
+	//begin three argument constructor
+	public SalesBill( String customer, double total, double tax ) {
+		
+		setCustomerName( customer );
+		setTotalSales( total );
+		setTaxRate( tax );
+		
+	} //end three argument constructor 
+
+	//----------------------------------------------------------------Get & Set Customer Name
+	public void setCustomerName( String customer ) {
+		
+		if (customer != null ) {
+			this.customerName = customer;
+		} //end if statement 
+		
+		else {
+			this.customerName = "";
+		} //end else statement
+		
+	} //end set customer name
+	
+	//begin get method for Customer Name
+	public String getCustomerName() {
+		
+		return customerName;
+		
+	} //end get customer name 
+
+	//----------------------------------------------------------------Get & Set Total Sales
+	//this calculates total sales before tax
+	public void setTotalSales( double total ) {
+		
+		if ( total >= 0 ) {
+			
+			this.totalSales = total;
+			
+		} //end if statement 
+		
+		else {
+			this.totalSales = 0; 
+		} //end else statement 
+		
+	} //end set total sales 
+	
+	//begin get statement for total sales 
+	public double getTotalSales() {
+		
+		return totalSales;
+		
+	} //end get total sales 
+
+	//----------------------------------------------------------------Get & Set Sales Tax
+	public void setTaxRate( double tax ) {
+		
+		if ( tax >= 0 ) {
+			
+			this.taxRate = tax;
+			
+		} //end if statement 
+		
+		else {
+			
+			this.taxRate = 0;
+			
+		} //end else 
+		
+	} //end set tax rate 
+	
+	//begin get tax rate method 
+	public double getTaxRate() {
+		
+		return taxRate;
+		
+	} //end get tax rate 
+
+	//----------------------------------------------------------------Get Total Sales Charge 
+	public double getTotalCharge() {
+		
+		//begin calculation for sales tax 
+		double totalCharge = ( (totalSales * taxRate ) / 100 ) + totalSales;
+		
+		return totalCharge;
+		
+	} //end get total charge 
+	
+	//----------------------------------------------------------------toString Override 
+	@Override
+	public String toString() {
+		
+		return String.format("Customer: %s\nSales: $%,.2f\tTax: %.1f%s\tTotal Charge: $%,.2f", 
+				getCustomerName(), getTotalSales(), getTaxRate(), "%", getTotalCharge() );
+		
+	} //end toString override 
+
+
+} //end class sales bill
+
+
+************
+SERVICE BILL
+************
+
+/*
+ * Courtney Holsinger
+ * 11.18.2015
+ * Midterm II 
+ * Class ServiceBill
+ */
+
+
+package sales_bill;
+
+public class ServiceBill extends SalesBill {
+
+	//----------------------------------------------------------------private instance variables
+	private double tip;
+	
+	//----------------------------------------------------------------ServiceBill Constructors
+	public ServiceBill( String customer, double total, double tax, double serviceTip ) {
+		
+		super( customer, total, tax );
+		
+		setTip( serviceTip );
+		
+	} //end service bill constructor 
+	
+	//----------------------------------------------------------------Get & Set Tip
+	public void setTip ( double serviceTip ) {
+		
+		if ( serviceTip >= 0 ) {
+			this.tip = serviceTip;
+		} //end if statement 
+		
+		else {
+			this.tip = 0;
+		} //end else 
+		
+	} //end set tip
+	
+	//begin get tip
+	public double getTip() {
+		
+		return tip;
+		
+	} //end get tip 
+
+	//----------------------------------------------------------------Override Get Total Sales Charge
+	@Override
+	public double getTotalCharge() {
+		
+		//begin calculation for sales tax 
+		double grossCharge = ( (getTotalSales() * getTaxRate() ) / 100 ) + getTotalSales();
+		
+		double withTip = ( ( grossCharge * tip ) / 100 ) + grossCharge;
+		
+		return withTip;
+
+	} //end override of get total charge 
+	
+	//----------------------------------------------------------------Override Get Total Sales Charge
+	@Override
+	public String toString() {
+		
+		return String.format( "Customer: %s\nSales: $%,.2f\tTax: %.1f%s\tTip: %.1f%s\tTotal Charge: $%,.2f", 
+				getCustomerName(), getTotalSales(), getTaxRate(), "%", getTip(), "%", getTotalCharge() );
+		
+	} //end toString override 
+	
+} //end class ServiceBill
+
+
+*********
+TEST BILL
+*********
+
+/*
+ * Courtney Holsinger
+ * 11.18.2015
+ * Midterm II 
+ * Class TestBill
+ */
+
+package sales_bill;
+
+public class TestBill {
+	
+	public static void main( String[] args ) {
+	
+
+	//----------------------------------------------------------------New SalesBill Objects
+	SalesBill salesBill1 = new SalesBill( "John Smith" );
+	SalesBill salesBill2 = new SalesBill( "Joe Smith", 200.00, 8.5 );
+	ServiceBill serviceBill = new ServiceBill( "Jane Smith", 60, 8.5, 15 );
+	
+	//----------------------------------------------------------------Set Methods for salesBill1
+	salesBill1.setTotalSales( 80 );
+	salesBill1.setTaxRate( 8.5 );
+	
+	//----------------------------------------------------------------Array for all Sales
+	SalesBill[] sales = new SalesBill[3];
+	
+	sales[0] = salesBill1;
+	sales[1] = salesBill2;
+	sales[2] = serviceBill;
+	
+	//----------------------------------------------------------------All Sales Processed Polymorphically
+	//variable for grand total
+	double grandTotal = 0;
+	
+	//for (Employee currentEmployee : employees)
+	for (SalesBill currentSale : sales ) {
+		
+		//calculates grand total
+		grandTotal += currentSale.getTotalCharge();
+		
+		//grandTotal += total;
+		
+		System.out.println( currentSale ); //invokes toString
+		
+	} //end for statement to process polymorphically
+	
+	//print out grand total
+	System.out.printf( "Grand Total Charge: $%,.2f", grandTotal );
+
+	
+	
+	} //end method main 
+	
+} //end class test bill
+
+******
+OUTPUT
+******
+
+Customer: John Smith
+Sales: $80.00	Tax: 8.5%	Total Charge: $86.80
+Customer: Joe Smith
+Sales: $200.00	Tax: 8.5%	Total Charge: $217.00
+Customer: Jane Smith
+Sales: $60.00	Tax: 8.5%	Tip: 15.0%	Total Charge: $74.87
+Grand Total Charge: $378.67
+
+*****************************
+UML AND INHERITANCE HIERARCHY
+*****************************
+
+									+----------------------+
+									|       SalesBill      |
+									+----------------------+
+												^
+												|
+									+----------------------+
+									|      ServiceBill     |
+									+----------------------+
+
+
++--------------------------------------------------------------------------------------
+| SalesBill
++--------------------------------------------------------------------------------------
+| - customerName : String
+| - totalSales : double
+| - taxRate : double
++--------------------------------------------------------------------------------------
+| + SalesBill ( String customer )
+| + SalesBill ( String customer, double totalSales, double taxRate )
+| 
+| + setCustomerName ( String name )
+| + getCustomerName : String
+| 
+| + setTotalSales ( double Sales )
+| + getTotalSales : double 
+| 
+| + setTaxRate (double tax )
+| + getTaxRate : double
+| 
+| + getTotalCharge : double
+| + toString : String
++----------------------------------------------------------------------------------------
+
++----------------------------------------------------------------------------------------
+| ServiceBill
++----------------------------------------------------------------------------------------
+| - tip : double
++----------------------------------------------------------------------------------------
+| + ServiceBill ( String customer, double totalSales, double taxRate, double serviceTip )
+| 
+| + setTip ( double serviceTip )
+| + getTip : double
+| 
+| + getTotalCharge : double
+| + toString : String
++----------------------------------------------------------------------------------------
+
++----------------------------------------------------------------------------------------
+| TestBill
++----------------------------------------------------------------------------------------
+| + SalesBill[] sales : multiDimensional : String, double 
++----------------------------------------------------------------------------------------
+|
++----------------------------------------------------------------------------------------
+
+
+
